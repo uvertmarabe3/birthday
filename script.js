@@ -30,41 +30,26 @@ const store = {
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true } catch (e) { return false } }
 };
 
-/* ---- Gate: show today's date, auto-type it as the password ---- */
-const now = new Date();
-const pad = n => String(n).padStart(2, "0");
-const todayStr = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
-$("#today").textContent = now.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+/* ---- Gate: password ---- */
+const PASSWORD = "cheuve1216";
 
 function unlock() {
     $("#gate").classList.add("hide");
     document.body.classList.remove("locked");
-    store.set("unlockedOn", todayStr);
+    store.set("unlocked", true);
 }
 
 function check() {
-    if (typing) {
-        clearInterval(t);
-        typing = false;
-        $("#pw").value = todayStr
-    } // clicked Enter while still typing
-    if ($("#pw").value.trim() === todayStr) unlock();
+    if ($("#pw").value.trim() === PASSWORD) unlock();
     else $("#msg").textContent = "Wrong password";
 }
 $("#go").onclick = check;
 $("#pw").addEventListener("keydown", e => e.key === "Enter" && check());
 
-// type the date in automatically (the visitor must still click Enter)
-let typing = true,
-    i = 0;
-const t = setInterval(() => {
-    $("#pw").value = todayStr.slice(0, ++i);
-    if (i >= todayStr.length) {
-        clearInterval(t);
-        typing = false;
-        $("#msg").textContent = "Password filled automatically ✓"
-    }
-}, 180);
+if (store.get("unlocked") === true) { // already unlocked before
+    $("#gate").style.display = "none";
+    document.body.classList.remove("locked");
+}
 
 /* ---- Memories: one picture per full section ---- */
 const dates = store.get("dates", {}),
