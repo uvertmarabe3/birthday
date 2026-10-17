@@ -36,7 +36,6 @@ const PASSWORD = "cheuve1216";
 function unlock() {
     $("#gate").classList.add("hide");
     document.body.classList.remove("locked");
-    store.set("unlocked", true);
 }
 
 function check() {
@@ -46,10 +45,7 @@ function check() {
 $("#go").onclick = check;
 $("#pw").addEventListener("keydown", e => e.key === "Enter" && check());
 
-if (store.get("unlocked") === true) { // already unlocked before
-    $("#gate").style.display = "none";
-    document.body.classList.remove("locked");
-}
+
 
 /* ---- Memories: one picture per full section ---- */
 const dates = store.get("dates", {}),
